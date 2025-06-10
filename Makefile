@@ -76,6 +76,7 @@ cppmem bin/main bin/main.opt: cmm.ml ocamlbuild
 OBCFLAGS=-cflags -g,-I,../$(LEMOCAMLLIBDIR)/_build/
 OBLFLAGS=-lflags -g,-I,../$(LEMOCAMLLIBDIR)/_build/
 OBXFLAGS=-X bin -X doc -X $(JSOFOCAMLDIR) -X web
+OBPACKAGEFLAGS=-package num
 OBMISCFLAGS=-no-links -classic-display
 
 ocamlbuild: extract.cma extract.cmxa cmm.ml
@@ -202,6 +203,6 @@ clean::
 
 
 extract.cma :
-	ocamlbuild $(OBXFLAGS) extract.cma
+	ocamlbuild $(OBXFLAGS) $(OBPACKAGEFLAGS) extract.cma
 extract.cmxa :
-	ocamlbuild $(OBXFLAGS) extract.cmxa
+	ocamlbuild $(OBXFLAGS) -cflags $$(ocamlfind query -i-format -r num | tr ' \n' ',' | head -c -1) extract.cmxa
