@@ -1668,27 +1668,27 @@ let read_toc ic =
   let pos_trailer = in_channel_length ic - 16 in
   seek_in ic pos_trailer;
   let num_sections = input_binary_int ic in
-  let header = String.create(String.length exec_magic_number) in
+  let header = Bytes.create(String.length exec_magic_number) in
   really_input ic header 0 (String.length exec_magic_number);
-  if header <> exec_magic_number then raise Bad_magic_number;
+  if header <> Bytes.of_string exec_magic_number then raise Bad_magic_number;
   seek_in ic (pos_trailer - 8 * num_sections);
   let section_table = ref [] in
   for i = 1 to num_sections do
     let name = String.create 4 in
     really_input ic name 0 4;
     let len = input_binary_int ic in
-    section_table := (name, len) :: !section_table
+    section_table := (Bytes.to_string name, len) :: !section_table
   done;
   !section_table
 
 let read_primitive_table toc ic =
   let len = seek_section toc ic "PRIM" in
-  let p = String.create len in
+  let p = Bytes.create len in
   really_input ic p 0 len;
   let rec split beg cur =
     if cur >= len then []
-    else if p.[cur] = '\000' then
-      String.sub p beg (cur - beg) :: split (cur + 1) (cur + 1)
+    else if Bytes.get p cur = '\000' then
+      Bytes.sub p beg (cur - beg) :: split (cur + 1) (cur + 1)
     else
       split beg (cur + 1) in
   Array.of_list(split 0 0)
@@ -1715,7 +1715,7 @@ let fixed_code =
 let fix_min_max_int code =
   begin try
     let i = Str.search_forward orig_code code 0 in
-    String.blit fixed_code 0 code (i + 16) (String.length fixed_code)
+    String.blit fixed_code 0 (Bytes.of_string code) (i + 16) (String.length fixed_code)
   with Not_found ->
     Format.eprintf
       "Warning: could not fix min_int/max_int definition \

@@ -24,20 +24,21 @@ module VarPrinter = struct
   let name v nm = Hashtbl.add names v nm
   let propagate_name v v' =
     try name v' (Hashtbl.find names v) with Not_found -> ()
-  let name v nm =
+  let name v nms =
+    let nm = Bytes.of_string nms in
     let is_alpha c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') in
     let is_num c = (c >= '0' && c <= '9') in
-    if String.length nm > 0 then begin
-      let nm = String.copy nm in
-      if not (is_alpha nm.[0]) then nm.[0] <- '_';
-      for i = 1 to String.length nm - 1 do
-        if not (is_alpha nm.[i] || is_num nm.[i]) then nm.[i] <- '_';
+    if Bytes.length nm > 0 then begin
+      let nm = Bytes.copy nm in
+      if not (is_alpha (Bytes.get nm 0)) then nm.[0] <- '_';
+      for i = 1 to Bytes.length nm - 1 do
+        if not (is_alpha (Bytes.get nm i) || is_num (Bytes.get nm i)) then nm.[i] <- '_';
       done;
       let c = ref 0 in
-      for i = 0 to String.length nm - 1 do
-        if nm.[i] = '_' then incr c
+      for i = 0 to Bytes.length nm - 1 do
+        if Bytes.get nm i = '_' then incr c
       done;
-      if !c < String.length nm then name v nm
+      if !c < Bytes.length nm then name v nm
     end
 
   let reserved = Hashtbl.create 107
@@ -73,7 +74,7 @@ module VarPrinter = struct
     if !pretty then begin
       try
         let nm = Hashtbl.find names i in
-        Format.sprintf "%s_%s_" nm s
+        Format.sprintf "%s_%s_" (Bytes.to_string nm) s
       with Not_found ->
         Format.sprintf "_%s_" s
     end else

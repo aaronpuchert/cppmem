@@ -153,7 +153,7 @@ let newline st =
 let to_out_channel ch =
   { indent = 0; box_indent = 0; prev_indents = [];
     limit = 78; cur = 0; l = []; n = 0; w = 0;
-    compact = false; output = fun s i l -> output ch s i l }
+    compact = false; output = fun s i l -> output ch (Bytes.of_string s) i l }
 
 let to_buffer b =
   { indent = 0; box_indent = 0; prev_indents = [];

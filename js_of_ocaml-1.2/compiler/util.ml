@@ -43,10 +43,10 @@ let rec find_in_paths paths name =
 let read_file f =
   let ch = open_in_bin f in
   let b = Buffer.create 4096 in
-  let s = String.create 4096 in
+  let s = Bytes.create 4096 in
   while
     let n = input ch s 0 4096 in
-    Buffer.add_substring b s 0 n;
+    Buffer.add_subbytes b s 0 n;
     n <> 0
   do () done;
   close_in ch;

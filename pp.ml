@@ -1178,9 +1178,9 @@ let pp_isa () (m,testname,(exod,exedo,exddo)) =
 let string_map f s =
   let l = String.length s in
   if l = 0 then s else begin
-    let r = String.create l in
-    for i = 0 to l - 1 do String.unsafe_set r i (f(String.unsafe_get s i)) done;
-    r
+    let r = Bytes.create l in
+    for i = 0 to l - 1 do Bytes.set r i (f(String.unsafe_get s i)) done;
+    Bytes.to_string r
   end
 
 let pp_tex () (m,testname,(exod,exedo,exddo)) = 
