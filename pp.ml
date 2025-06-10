@@ -809,7 +809,7 @@ let pp_dot () (m,testname,(exod,exedo,exddo)) =
   let pp_constraint_rank = "" in
   (* The positioning depends on layout always adding an additional +2 at the end *)
   let pp_constraint_x = 0 in
-  let pp_constraint_y = max_y - 1in
+  let pp_constraint_y = max_y - 1 in
 
   let pp_constraint () vc = 
     if vc = Constraints.ctrue then "" 
